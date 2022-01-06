@@ -6,12 +6,15 @@ signal get_token()
 
 var server = TCP_Server.new()
 
-onready var state = Globals.state
+#onready var state = Globals.state
 
 
 var info
 
 var peer
+
+
+var one_shot = true
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -27,11 +30,14 @@ func _ready():
 
 func _input(event):
 	
-	if Input.is_action_just_released("open_auth"):
+	if Input.is_action_just_released("open_auth") and one_shot:
+		
+		one_shot = false
+		
 		
 		var URI = "https://id.twitch.tv/oauth2/authorize?response_type=code&client_id=" \
-				+ Globals.client_id + "&redirect_uri=http://localhost&scope=channel:read:redemptions&state=" \
-				+ state
+				+ Globals.credentials["client_id"] + "&redirect_uri=http://localhost&scope=channel:read:redemptions&state=" \
+				+ Globals.create_state()
 		
 		OS.shell_open(URI)
 		
@@ -56,7 +62,7 @@ func _process(delta):
 		
 		info = peer.get_utf8_string(bytes)
 		
-		print("Info: ", info)
+		printraw("Info: ", info)
 		
 #		Grabs the state received
 		var received_state = info.split("&")[-1]
@@ -74,17 +80,19 @@ func _process(delta):
 		print("State received from Twitch: ", received_state)
 		
 		
-		if received_state == state:
+		if received_state == Globals.state:
 			
 			print(peer)
 			print("Something")
 			
 			
-			
+#			GET ?code=
 			
 			var temp_code = info.substr(11,30)
 			
 			temp_code = temp_code.replace(" ", "")
+			
+			printraw("Cut Code: ", temp_code)
 			
 			
 			Globals.code = temp_code
@@ -92,7 +100,7 @@ func _process(delta):
 #			print("Auth Code: ", temp_code)
 			
 			
-			emit_signal("get_token")
+			call_deferred("emit_signal", "get_token")
 			
 #			set_process(false)
 			
