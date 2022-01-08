@@ -14,24 +14,29 @@ func _ready():
 #func _process(delta):
 #	pass
 
-func redeemed(redemption, reward, user_input):
+func reward_redeemed(redemption, reward, user_input):
 	
-	if reward["title"] == title:
+	if reward["title"].strip_edges() == title.strip_edges():
 		
-		if text_redeem:
-			
-			run_node(redemption, reward, user_input)
-			
-		else:
-			
-			run_node(redemption, reward, false)
-			
+		run_node(redemption, reward, user_input)
+		
+	else:
+		
+		push_error("RN Error: Reward received didn't match set reward.  " +\
+					"Received Reward: " + reward["title"] + " " +\
+					"Set Reward: " + title)
+		
 	
 
 func run_node(redemption, reward, user_input):
 	
 #	Just a test function for figuring out layout of the nodes in the final project
 	prints("Standin Node: ", redemption["user"]["display_name"], reward["title"] )
+	
+	if user_input is String:
+		
+		print(user_input)
+		
 	
 
 

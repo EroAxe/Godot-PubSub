@@ -12,6 +12,7 @@ font_data = ExtResource( 5 )
 
 [sub_resource type="DynamicFont" id=1]
 size = 25
+outline_color = Color( 0.0196078, 0.470588, 1, 1 )
 use_filter = true
 font_data = ExtResource( 5 )
 
@@ -19,10 +20,11 @@ font_data = ExtResource( 5 )
 default_font = SubResource( 1 )
 GraphNode/colors/title_color = Color( 0.411765, 0.0823529, 0.945098, 1 )
 GraphNode/fonts/title_font = SubResource( 3 )
+LinkButton/colors/font_color = Color( 0.341176, 0.658824, 0.811765, 1 )
 
 [node name="HTTP_Requests" type="Control"]
-margin_right = 40.0
-margin_bottom = 40.0
+anchor_right = 1.0
+anchor_bottom = 1.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -42,11 +44,18 @@ wait_time = 5.0
 [node name="Timer2" type="Timer" parent="."]
 wait_time = 30.0
 
-[node name="Redemption Node" type="GraphNode" parent="."]
-margin_left = 332.0
-margin_top = 163.0
-margin_right = 482.0
-margin_bottom = 254.0
+[node name="GraphEdit" type="GraphEdit" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = SubResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="Redemption_Node" type="GraphNode" parent="GraphEdit"]
+margin_right = 193.0
+margin_bottom = 101.0
+mouse_filter = 1
 theme = SubResource( 2 )
 title = "Redemptions"
 slot/0/left_enabled = false
@@ -65,7 +74,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Signal_Receiver" type="LineEdit" parent="Redemption Node"]
+[node name="Signal_Receiver" type="LineEdit" parent="GraphEdit/Redemption_Node"]
 margin_left = 16.0
 margin_top = 24.0
 margin_right = 177.0
@@ -77,7 +86,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="CheckBox" type="CheckBox" parent="Redemption Node"]
+[node name="CheckBox" type="CheckBox" parent="GraphEdit/Redemption_Node"]
 margin_left = 16.0
 margin_top = 61.0
 margin_right = 177.0
@@ -85,11 +94,35 @@ margin_bottom = 95.0
 rect_min_size = Vector2( 161, 34 )
 text = "Text Redemption"
 
+[node name="Auth_Button" type="LinkButton" parent="GraphEdit"]
+margin_left = 824.0
+margin_top = 8.0
+margin_right = 1003.0
+margin_bottom = 34.0
+theme = SubResource( 2 )
+text = "Twitch Authentication"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Websocket_Test" type="Button" parent="GraphEdit"]
+margin_left = 48.0
+margin_top = 328.0
+margin_right = 187.0
+margin_bottom = 360.0
+text = "Test Websocket"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [connection signal="connect_websocket" from="HTTP_Requester" to="Web_Socket_Client" method="connect_to_websocket"]
 [connection signal="got_token" from="HTTP_Requester" to="HTTP_Requester" method="get_channel_id"]
 [connection signal="request_completed" from="HTTP_Requester" to="HTTP_Requester" method="token_grabbed"]
 [connection signal="get_token" from="TPC_Server_Test" to="HTTP_Requester" method="grab_token"]
+[connection signal="reward_redeemed" from="Web_Socket_Client" to="GraphEdit/Redemption_Node/Signal_Receiver" method="reward_redeemed"]
 [connection signal="timeout" from="Timer" to="Web_Socket_Client" method="send_var" binds= [ false, true ]]
 [connection signal="timeout" from="Timer2" to="HTTP_Requester" method="check_token"]
-[connection signal="text_changed" from="Redemption Node/Signal_Receiver" to="Redemption Node/Signal_Receiver" method="property_change" binds= [ "title" ]]
-[connection signal="toggled" from="Redemption Node/CheckBox" to="Redemption Node/Signal_Receiver" method="property_change" binds= [ "text_redeem" ]]
+[connection signal="text_changed" from="GraphEdit/Redemption_Node/Signal_Receiver" to="GraphEdit/Redemption_Node/Signal_Receiver" method="property_change" binds= [ "title" ]]
+[connection signal="toggled" from="GraphEdit/Redemption_Node/CheckBox" to="GraphEdit/Redemption_Node/Signal_Receiver" method="property_change" binds= [ "text_redeem" ]]
+[connection signal="pressed" from="GraphEdit/Auth_Button" to="TPC_Server_Test" method="get_authentication"]
+[connection signal="pressed" from="GraphEdit/Websocket_Test" to="Web_Socket_Client" method="connect_to_websocket"]

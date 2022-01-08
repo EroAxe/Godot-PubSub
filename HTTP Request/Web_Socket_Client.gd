@@ -30,7 +30,7 @@ onready var listeners = {
 	
 	"type": "LISTEN",
 	
-	"nonce": Globals.make_nonce(10),
+	"nonce": "",
 	
 	"data": {
 		
@@ -57,6 +57,8 @@ func _ready():
 	
 	websocket.connect("connection_established", self, "connection_established")
 	
+	websocket.connect("connection_closed", self, "connection_closed")
+	
 	
 	set_process(false)
 	
@@ -73,15 +75,28 @@ func replace_id():
 	print("Topics Are: ", topics)
 	
 
+# Connects to the specified websocket, Twitch PubSub
 func connect_to_websocket():
 	
+#	Sets the auth token based off the token saved in credentials.
 	listeners["data"]["auth_token"] = Globals.credentials["token"]
 	
+	if Globals.state != "Temp":
+	#	Sets the nonce, or "state" essentially a password for the connection.
+	#	Is set based off Globals.state since it shouldn't be changing anymore
+		listeners["nonce"] = Globals.state
+		
+	else:
+		
+		listeners["nonce"] = Globals.create_state()
+		
 	
+	
+#	Replaces the % with the supplied Channel ID
 	replace_id()
 	printraw(listeners)
 	
-	
+#	Connects the websocket to the URL
 	websocket.connect_to_url(URL)
 	
 	set_process(true)
@@ -115,6 +130,16 @@ func connection_established(protocol):
 		
 	
 
+func connection_closed(was_clean):
+	
+	if !was_clean:
+		
+		push_error("WS Error: Disconnection from Socket was not Clean")
+		
+	
+	set_process(false)
+	
+
 
 func check_response_type(packet, info):
 	
@@ -132,14 +157,17 @@ func check_response_type(packet, info):
 	
 #		Response from twitch upon receiving ping message.  Don't need to do anything
 		"PONG":
-
+			
 			print(info["type"])
 			pass
 			
 		
 #		Sent by twitch when you need to reconnect to the server.  Generally when it's clearing websockets
 		"RECONNECT":
-
+			
+#			Outputs the type of info received from Twitch
+			print(info["type"])
+			
 			print("Received Reconnect Message")
 #			Reconnection Logic, needs exponential backoff on reconnecting.
 			websocket.disconnect_from_host()
@@ -156,25 +184,43 @@ func check_response_type(packet, info):
 		
 #		Sent by twitch upon receiving a listener command to the websocket
 		"RESPONSE":
-
+			
+#			Outputs the type of info received from Twitch
+			print(info["type"])
+			
 			if !info.has("nonce") or info["nonce"] != Globals.state:
-
+				
 #				Pushes out a WS_R error since it's an from Websocket Response
 				push_error("WS_R Error: Supplied Nonce did not Match or No Nonce Supplied")
+				
+				
+				printraw(info)
+				
+				printraw("\n")
+				
+				printraw(Globals.state)
+				
 				return
-
-
+				
+			
 			if !info["error"].empty():
-
+				
 #				Pushes out a WS_R Error with the supplied error from Twitch
 				push_error("WS_R Error from Twitch: " + info["error"])
+				
+#				Disconnects the websocket to allow reconnecting after the error is resolved.
+				websocket.disconnect_from_host(1002, "Need to Resolve Error")
+				
 				return
-
-
+				
+			
 			emit_signal("pubsub_connected")
 			
 		
 		"MESSAGE":
+			
+#			Outputs the type of info received from Twitch
+			print(info["type"])
 			
 			var rec_topic = info["data"]["topic"]
 			
@@ -197,7 +243,6 @@ func check_response_type(packet, info):
 					
 					user_input = rec_message["data"]["redemption"]["user_input"]
 					
-				
 				
 #				Emits the reward redeemed signal.  Can be connected wherever, has most relevent information.
 				emit_signal("reward_redeemed", redemption, reward, user_input)

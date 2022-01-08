@@ -97,6 +97,8 @@ func token_grabbed(result, response_code, headers, body):
 		
 		Globals.credentials["display_name"] = response["data"][0]["display_name"]
 		
+		Globals.save_data()
+		
 		
 		check_token()
 		
