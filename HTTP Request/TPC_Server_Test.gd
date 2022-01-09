@@ -26,17 +26,15 @@ func _ready():
 	pass
 	
 
-
-
-func _input(event):
+func get_authentication():
 	
-	if Input.is_action_just_released("open_auth") and one_shot:
-		
-		one_shot = false
+#	if one_shot:
+#
+#		one_shot = false
 		
 		
 		var URI = "https://id.twitch.tv/oauth2/authorize?response_type=code&client_id=" \
-				+ Globals.credentials["client_id"] + "&redirect_uri=http://localhost&scope=channel:read:redemptions&state=" \
+				+ Globals.client_id + "&redirect_uri=http://localhost&scope=channel:read:redemptions&state=" \
 				+ Globals.create_state()
 		
 		OS.shell_open(URI)
@@ -45,6 +43,26 @@ func _input(event):
 		yield(get_tree().create_timer(2), "timeout")
 		
 		set_process(true)
+	
+
+
+#func _input(event):
+#
+#	if Input.is_action_just_released("open_auth") and one_shot:
+#
+#		one_shot = false
+#
+#
+#		var URI = "https://id.twitch.tv/oauth2/authorize?response_type=code&client_id=" \
+#				+ Globals.client_id + "&redirect_uri=http://localhost&scope=channel:read:redemptions&state=" \
+#				+ Globals.create_state()
+#
+#		OS.shell_open(URI)
+#
+#
+#		yield(get_tree().create_timer(2), "timeout")
+#
+#		set_process(true)
 		
 	
 
