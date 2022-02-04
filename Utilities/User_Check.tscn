@@ -1,0 +1,15 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://Utilities/User_Check.gd" type="Script" id=1]
+
+[node name="User_Check" type="LineEdit"]
+margin_right = 110.0
+margin_bottom = 24.0
+rect_min_size = Vector2( 110, 0 )
+placeholder_text = "User/Channel"
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[connection signal="text_changed" from="." to="." method="check_user"]

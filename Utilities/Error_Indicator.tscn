@@ -1,0 +1,31 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Utilities/Error_Indicator.gd" type="Script" id=2]
+
+[sub_resource type="StyleBoxTexture" id=1]
+region_rect = Rect2( 0, 0, 64, 64 )
+
+[node name="Error_Indicator" type="MarginContainer"]
+margin_right = 26.0
+margin_bottom = 26.0
+rect_min_size = Vector2( 26, 26 )
+size_flags_horizontal = 0
+size_flags_vertical = 0
+custom_constants/margin_right = 1
+custom_constants/margin_top = 1
+custom_constants/margin_left = 1
+custom_constants/margin_bottom = 1
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Panel" type="Panel" parent="."]
+margin_left = 1.0
+margin_top = 1.0
+margin_right = 25.0
+margin_bottom = 25.0
+custom_styles/panel = SubResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}

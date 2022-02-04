@@ -9,49 +9,40 @@
 config_version=4
 
 _global_script_classes=[ {
-"base": "HBoxContainer",
-"class": "ContributorClass",
+"base": "Resource",
+"class": "Creds",
 "language": "GDScript",
-"path": "res://addons/github-integration/scripts/ContributorClass.gd"
+"path": "res://Globals n Classes/Creds.gd"
 }, {
-"base": "PanelContainer",
-"class": "GistItem",
+"base": "GraphNode",
+"class": "Deck_Node",
 "language": "GDScript",
-"path": "res://addons/github-integration/scripts/GistItem.gd"
+"path": "res://Globals n Classes/Deck_Node.gd"
 }, {
-"base": "HBoxContainer",
-"class": "InvitationItem",
+"base": "Deck_Node",
+"class": "Twitch_Node",
 "language": "GDScript",
-"path": "res://addons/github-integration/scripts/InvitationItem.gd"
-}, {
-"base": "PanelContainer",
-"class": "RepositoryItem",
-"language": "GDScript",
-"path": "res://addons/github-integration/scripts/RepositoryItem.gd"
+"path": "res://Globals n Classes/Twitch_Node.gd"
 } ]
 _global_script_class_icons={
-"ContributorClass": "",
-"GistItem": "",
-"InvitationItem": "",
-"RepositoryItem": ""
+"Creds": "",
+"Deck_Node": "",
+"Twitch_Node": ""
 }
 
 [application]
 
 config/name="Twitch Testing"
+run/main_scene="res://Nodes/Twitch_Connector.tscn"
 config/icon="res://icon.png"
 
 [autoload]
 
-Globals="*res://Globals.gd"
-PluginSettings="*res://addons/github-integration/scripts/PluginSettings.gd"
-IconLoaderGithub="*res://addons/github-integration/scripts/IconLoaderGithub.gd"
-UserData="*res://addons/github-integration/scripts/user_data.gd"
-RestHandler="*res://addons/github-integration/scenes/RestHandler.tscn"
+Globals="*res://Globals n Classes/Globals.gd"
 
 [editor_plugins]
 
-enabled=PoolStringArray( "res://addons/github-integration/plugin.cfg" )
+enabled=PoolStringArray(  )
 
 [input]
 
